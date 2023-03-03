@@ -3,7 +3,7 @@ import request from '@/utils/request'
 export default {
   // 1 讲师列表（条件查询分页）
   // current当前页 limit每页记录数 teacherQuery条件对象
-  getTeacherListPage(current, limit, teacherQuery) {
+  getTeacherListPage(current, limit, teacherQuery) { // 分页获取讲师列表
     return request({
       url: `/eduservice/edu-teacher/pageTeacherCondition/${current}/${limit}`,
       method: 'post',
@@ -12,11 +12,27 @@ export default {
       data: teacherQuery
     })
   },
-  removeTeacherById(id) {
+  removeTeacherById(id) { // 删除讲师
     return request({
       url: `/eduservice/edu-teacher/deleteTeacher/${id}`,
       method: 'delete'
     })
-  }
-}
+  },
 
+  addTeacher(teacher) { // 添加讲师
+    return request({
+      url: `/eduservice/edu-teacher/addTeacher`,
+      method: 'post',
+      data: teacher
+    })
+  },
+
+  updateTeacher(teacher) { // 修改讲师
+    return request({
+      url: `/eduservice/edu-teacher/updateTeacher`,
+      method: 'post',
+      data: teacher
+    })
+  }
+
+}
