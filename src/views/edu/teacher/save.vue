@@ -39,7 +39,7 @@
         </el-upload>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="submitForm('teacher')">立即创建</el-button>
+        <el-button type="primary" @click="submitForm('teacher')">保存</el-button>
         <el-button @click="resetForm('teacher')">重置</el-button>
       </el-form-item>
     </el-form>
@@ -50,7 +50,7 @@
 import teacherApi from '@/api/teacher'
 
 export default {
-  name: 'Add',
+  name: 'Save',
   data() {
     return {
       teacher: {
@@ -83,10 +83,36 @@ export default {
       }
     }
   },
+  watch: {
+    $route(to, from) {
+      console.log('watch $route')
+      this.init()
+    }
+  },
   created() {
+    if (this.$route.params && this.$route.params.id) {
+      this.getInfo(this.$route.params.id)
+    }
   },
   methods: {
-    submitForm(teacher) {
+
+    updateTeacherInfo(teacher) {
+      this.$refs[teacher].validate(async valid => {
+        if (valid) {
+          const res = await teacherApi.updateTeacher(this.teacher)
+          if (res.code === 20000) {
+            this.$message.success('修改成功')
+            this.$router.push('/teacher/table')
+          } else {
+            this.$message.error('修改失败')
+          }
+        } else {
+          this.$message.error('请检查表单信息')
+          return false
+        }
+      })
+    },
+    addTeacher(teacher) {
       this.$refs[teacher].validate(async valid => {
         if (valid) {
           const res = await teacherApi.addTeacher(this.teacher)
@@ -101,6 +127,13 @@ export default {
           return false
         }
       })
+    },
+    submitForm(teacher) {
+      if (this.$route.params && this.$route.params.id) {
+        this.updateTeacherInfo(teacher)
+      } else {
+        this.addTeacher(teacher)
+      }
     },
     resetForm(formName) {
       this.$refs[formName].resetFields()
@@ -119,6 +152,11 @@ export default {
     },
     handleAvatarSuccess(res, file) {
       this.teacher.avatar = URL.createObjectURL(file.raw)
+    },
+    getInfo(id) {
+      teacherApi.getTeacherInfo(id).then(res => {
+        this.teacher = res.data.teacher
+      })
     }
   }
 }

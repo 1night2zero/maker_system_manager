@@ -92,8 +92,15 @@ export const constantRoutes = [
       {
         path: 'add',
         name: '添加讲师',
-        component: () => import('@/views/edu/teacher/add'),
+        component: () => import('@/views/edu/teacher/save'),
         meta: { title: '添加讲师', icon: 'tree' }
+      },
+      {
+        path: 'edit/:id',
+        name: '修改讲师',
+        component: () => import('@/views/edu/teacher/save'),
+        meta: { title: '编辑讲师', noCache: true },
+        hidden: true
       }
     ]
   },

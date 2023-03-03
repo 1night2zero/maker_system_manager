@@ -27,6 +27,13 @@ export default {
     })
   },
 
+  getTeacherInfo(id) {
+    return request({
+      url: `/eduservice/edu-teacher/getTeacher/${id}`,
+      method: 'get'
+    })
+  },
+
   updateTeacher(teacher) { // 修改讲师
     return request({
       url: `/eduservice/edu-teacher/updateTeacher`,

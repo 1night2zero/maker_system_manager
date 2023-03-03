@@ -50,11 +50,13 @@
       </el-table-column>
       <el-table-column label="操作" width="180">
         <template v-slot="scope">
-          <el-button
-            type="primary"
-            icon="el-icon-edit"
-            size="small"
-          />
+          <router-link :to="'/teacher/edit/'+scope.row.id">
+            <el-button
+              type="primary"
+              icon="el-icon-edit"
+              size="small"
+            ></el-button>
+          </router-link>
           <el-button
             type="danger"
             icon="el-icon-delete"
