@@ -76,7 +76,27 @@ export const constantRoutes = [
       }
     ]
   },
-
+  {
+    path: '/teacher',
+    component: Layout,
+    redirect: '/teacher/table',
+    name: '讲师管理',
+    meta: { title: '讲师管理', icon: 'el-icon-s-custom' },
+    children: [
+      {
+        path: 'table',
+        name: '讲师列表',
+        component: () => import('@/views/edu/teacher/list'),
+        meta: { title: '讲师列表', icon: 'table' }
+      },
+      {
+        path: 'add',
+        name: '添加讲师',
+        component: () => import('@/views/edu/teacher/add'),
+        meta: { title: '添加讲师', icon: 'tree' }
+      }
+    ]
+  },
   {
     path: '/form',
     component: Layout,
