@@ -26,17 +26,21 @@
           <el-radio label="2">首席讲师</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="头像" prop="avatar">
-        <el-upload
-          class="avatar-uploader"
-          action="https://jsonplaceholder.typicode.com/posts/"
-          :show-file-list="false"
-          :on-success="handleAvatarSuccess"
-          :before-upload="beforeAvatarUpload"
-        >
-          <img v-if="teacher.avatar" :src="teacher.avatar" class="avatar">
-          <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-        </el-upload>
+      <!--   讲师头像   -->
+      <el-form-item label="讲师头像" prop="avatar">
+        <!--    头像缩略图    -->
+        <pan-thumb v-if="teacher.avatar!==''" :image="OSS_PATH+teacher.avatar"/>
+        <el-button type="primary" @click="imageCropperShow=true">更换头像</el-button>
+        <image-cropper
+          v-show="imageCropperShow"
+          :key="imageCropperKey"
+          :width="300"
+          :height="300"
+          :url="BASE_API+'/eduoss/fileoss/upload'"
+          field="file"
+          @close="close"
+          @crop-upload-success="cropSuccess"
+        />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submitForm('teacher')">保存</el-button>
@@ -48,9 +52,12 @@
 
 <script>
 import teacherApi from '@/api/teacher'
+import PanThumb from '@/components/PanThumb'
+import ImageCropper from '@/components/ImageCropper'
 
 export default {
   name: 'Save',
+  components: { PanThumb, ImageCropper },
   data() {
     return {
       teacher: {
@@ -80,7 +87,11 @@ export default {
         avatar: [
           { required: false, message: '请上传头像', trigger: 'change' }
         ]
-      }
+      },
+      imageCropperShow: false,
+      imageCropperKey: 0,
+      BASE_API: process.env.VUE_APP_BASE_API,
+      OSS_PATH: process.env.VUE_APP_OSS_PATH
     }
   },
   watch: {
@@ -95,7 +106,17 @@ export default {
     }
   },
   methods: {
+    close() { // 关闭弹窗方法
+      this.imageCropperShow = false
+      this.imageCropperKey++
+    },
 
+    cropSuccess(data) { // 上传成功方法
+      this.imageCropperShow = false
+      console.log(this.ossPath)
+      this.teacher.avatar = data.url
+      this.imageCropperKey++
+    },
     updateTeacherInfo(teacher) {
       this.$refs[teacher].validate(async valid => {
         if (valid) {
