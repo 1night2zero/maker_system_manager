@@ -113,7 +113,6 @@ export default {
 
     cropSuccess(data) { // 上传成功方法
       this.imageCropperShow = false
-      console.log(this.ossPath)
       this.teacher.avatar = data.url
       this.imageCropperKey++
     },
