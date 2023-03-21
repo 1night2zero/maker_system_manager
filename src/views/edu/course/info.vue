@@ -50,7 +50,8 @@
 
       <!--  课程简介   -->
       <el-form-item label="课程简介">
-        <el-input v-model="courseInfo.description" :min="0" placeholder=""/>
+        <!--        <el-input v-model="courseInfo.description" :min="0" placeholder=""/>-->
+        <tinymce :height="300" v-model="courseInfo.description"/>
       </el-form-item>
       <!--  课程封面   -->
       <el-form-item label="课程封面">
@@ -81,6 +82,7 @@
 <script>
 import course from '@/api/course'
 import subject from '@/api/subject'
+import Tinymce from '@/components/Tinymce/index.vue'
 // const defaultForm = {
 //   title: '',
 //   subjectId: '',
@@ -93,6 +95,7 @@ import subject from '@/api/subject'
 // }
 export default {
   name: 'Info',
+  components: { Tinymce },
   data() {
     return {
       saveBtnDisabled: false,
@@ -168,5 +171,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.tinymce-container {
+  line-height: 30px;
 
+  .mce-content-body > p {
+    margin: 5px 0;
+  }
+}
 </style>

@@ -88,7 +88,8 @@ module.exports = {
             .after('html')
             .use('script-ext-html-webpack-plugin', [{
             // `runtime` must same as runtimeChunk name. default is `runtime`
-              inline: /runtime\..*\.js$/
+              inline: /runtime\..*\.js$/,
+              BASE_URL: config.publicPath + config.assetsDir
             }])
             .end()
           config
@@ -113,6 +114,10 @@ module.exports = {
                   priority: 5,
                   reuseExistingChunk: true
                 }
+              //   templateParameters: {
+              //     // BASE_URL: process.env.VUE_APP_BASE_API + config.dev.assetsDir
+              //     BASE_URL: config.publicPath + config.assetsDir
+              //   }
               }
             })
           // https:// webpack.js.org/configuration/optimization/#optimizationruntimechunk
