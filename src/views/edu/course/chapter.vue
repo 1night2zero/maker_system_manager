@@ -6,26 +6,79 @@
       <el-step title="创建课程大纲"/>
       <el-step title="提交审核"/>
     </el-steps>
+
+    <!-- 章节 -->
+    <ul class="chanpterList">
+      <li
+        v-for="chapter in chapterVideoList"
+        :key="chapter.id"
+      >
+        <p>
+          {{ chapter.title }}
+
+          <span class="acts">
+            <el-button style="" type="text" @click="openVideo(chapter.id)">添加小节</el-button>
+            <el-button style="" type="text" @click="openEditChatper(chapter.id)">编辑</el-button>
+            <el-button type="text" @click="removeChapter(chapter.id)">删除</el-button>
+          </span>
+        </p>
+
+        <!-- 视频 -->
+        <ul class="chanpterList videoList">
+          <li
+            v-for="video in chapter.children"
+            :key="video.id"
+          >
+            <p>{{ video.title }}
+
+              <span class="acts">
+
+                <el-button style="" type="text">编辑</el-button>
+                <el-button type="text" @click="removeVideo(video.id)">删除</el-button>
+              </span>
+            </p>
+          </li>
+        </ul>
+      </li>
+    </ul>
+
     <el-form style="text-align: center">
       <el-form-item>
         <el-button @click="previous">上一步</el-button>
-        <el-button :disabled="saveBtnDisabled" type="primary" @click="next">下
-          一步
-        </el-button>
+        <el-button :disabled="saveBtnDisabled" type="primary" @click="next">下一步</el-button>
       </el-form-item>
     </el-form>
+
   </div>
+
 </template>
 
 <script>
+import chapter from '@/api/chapter'
+
 export default {
   name: 'Chapter',
   data() {
     return {
-      saveBtnDisabled: false
+      saveBtnDisabled: false,
+      courseId: '',
+      chapterVideoList: []
     }
   },
+  created() {
+    if (this.$route.params && this.$route.params.id) {
+      this.courseId = this.$route.params.id
+    }
+    this.getListChapter(this.courseId)
+  },
   methods: {
+    // 根据课程id查询章节和小节
+    getListChapter(id) {
+      chapter.getAllChapterVideo(id)
+        .then(res => {
+          this.chapterVideoList = res.data.allChapter
+        })
+    },
     previous() {
       this.$router.push({ path: '/course/info' })
     },
@@ -37,5 +90,45 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.chanpterList {
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
 
+.chanpterList li {
+  position: relative;
+}
+
+.chanpterList p {
+  float: left;
+  font-size: 20px;
+  margin: 10px 0;
+  padding: 10px;
+  height: 70px;
+  line-height: 50px;
+  width: 100%;
+  border: 1px solid #DDD;
+}
+
+.chanpterList .acts {
+  float: right;
+  font-size: 14px;
+}
+
+.videoList {
+  padding-left: 50px;
+}
+
+.videoList p {
+  float: left;
+  font-size: 14px;
+  margin: 10px 0;
+  padding: 10px;
+  height: 50px;
+  line-height: 30px;
+  width: 100%;
+  border: 1px dotted #DDD;
+}
 </style>
