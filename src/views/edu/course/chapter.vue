@@ -80,10 +80,10 @@ export default {
         })
     },
     previous() {
-      this.$router.push({ path: '/course/info' })
+      this.$router.push({ path: '/course/info/' + this.courseId })
     },
     next() {
-      this.$router.push({ path: '/course/publish/1' })
+      this.$router.push({ path: '/course/publish/' + this.courseId })
     }
   }
 }

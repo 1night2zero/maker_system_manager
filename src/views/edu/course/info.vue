@@ -12,7 +12,7 @@
         <el-input v-model="courseInfo.title" placeholder="实例：机器学习项目课：从零基础到搭建chatGPT"/>
       </el-form-item>
 
-      <!--   TODO: 所属分类   -->
+      <!--   所属分类   -->
       <el-form-item label="课程分类">
         <el-select @change="subjectLevelChanged" v-model="courseInfo.subjectParentId" placeholder="一级分类">
           <el-option
@@ -98,6 +98,7 @@ export default {
   components: { Tinymce },
   data() {
     return {
+      courseId: '',
       saveBtnDisabled: false,
       courseInfo: {
         title: '',
@@ -117,16 +118,24 @@ export default {
     }
   },
   created() {
+    if (this.$route.params && this.$route.params.id) {
+      this.courseId = this.$route.params.id
+      this.getCourseInfo()
+    } else {
+      // 初始化所有讲师
+      this.getListTeacher()
+      // 初始化所有一级分类列表
+      this.getFirstSubject()
+    }
     this.getListTeacher()
     this.getFirstSubject()
   },
   methods: {
+    // 上传封面成功调用的方法
     handleAvatarSuccess(res, file) {
-      console.log(res)
-      console.log(URL.createObjectURL(file.raw))
       this.courseInfo.cover = res.data.url
     },
-
+    // 上传之前调用的方法
     beforeAvatarUpload(file) {
       const isJPG = file.type === 'image/jpeg'
       const isPNG = file.type === 'image/png'
@@ -139,11 +148,12 @@ export default {
       }
       return (isJPG || isPNG) && isLt2M
     },
+    // 分类列表改变时的方法
     subjectLevelChanged(value) {
       for (let i = 0; i < this.subjectFirstList.length; i++) {
         if (this.subjectFirstList[i].id === value) {
           this.subjectSecondList = this.subjectFirstList[i].children
-          this.courseInfo.subjectId = ''
+          this.courseInfo.subjectId = this.subjectSecondList[i].id
         }
       }
     },
@@ -159,14 +169,56 @@ export default {
         this.teacherList = res.data.items
       })
     },
+    // 添加课程
+    addCourse() {
+      course.addCourseInfo(this.courseInfo)
+        .then(res => {
+          this.$message.success('添加课程信息成功')
+          this.$router.push({ path: `/course/chapter/${res.data.courseId}` })
+        })
+    },
+    // 修改课程
+    updateCourse() {
+      course.updateCourseInfo(this.courseInfo)
+        .then(res => {
+          this.$message.success('修改课程信息成功')
+          this.$router.push({ path: `/course/chapter/${this.courseId}` })
+        })
+    },
+    // 下一步
     next() {
-      course.addCourseInfo(this.courseInfo).then(res => {
-        this.$message.success('添加课程信息成功')
-        console.log(res)
-        this.$router.push({ path: `/course/chapter/${res.data.courseId}` })
-      })
+      // 判断是添加还是修改
+      if (!this.courseInfo.id) {
+        this.addCourse()
+      } else {
+        this.updateCourse()
+      }
+    },
+    // 根据课程id查询
+    getCourseInfo() {
+      course.getCourseInfoById(this.courseId)
+        .then(res => {
+          // 在courseInfo课程基本信息，包含一级id和二级分类id
+          this.courseInfo = res.data.courseInfoVo
+          // 查询所有的分类，包含1级和2级
+          subject.getSubjectList()
+            .then(response => {
+              // 获取所有的一级分类
+              this.subjectFirstList = response.data.list
+              // 把所有的一级分类数组进行遍历，找到当前课程的一级分类
+              for (let i = 0; i < this.subjectFirstList.length; i++) {
+                if (this.subjectFirstList[i].id === this.courseInfo.subjectParentId) {
+                  // 找到当前课程的一级分类，把当前课程的二级分类赋值给subjectSecondList
+                  this.subjectSecondList = this.subjectFirstList[i].children
+                }
+              }
+            })
+          // 初始化所有讲师
+          this.getListTeacher()
+        })
     }
   }
+
 }
 </script>
 
