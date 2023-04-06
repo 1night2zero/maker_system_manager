@@ -187,6 +187,28 @@ export default {
     },
     // 下一步
     next() {
+      // 判断表达是否为空 switch case
+      switch (true) {
+        case this.courseInfo.title === '':
+          this.$message.error('课程名称不能为空')
+          return
+        case this.courseInfo.subjectId === '':
+          this.$message.error('课程分类不能为空')
+          return
+        case this.courseInfo.teacherId === '':
+          this.$message.error('讲师不能为空')
+          return
+        case this.courseInfo.description === '':
+          this.$message.error('课程简介不能为空')
+          return
+        // case this.courseInfo.cover === '':
+        //   this.$message.error('课程封面不能为空')
+        //   return
+        case this.courseInfo.price === '':
+          this.$message.error('课程价格不能为空')
+          return
+      }
+
       // 判断是添加还是修改
       if (!this.courseInfo.id) {
         this.addCourse()
