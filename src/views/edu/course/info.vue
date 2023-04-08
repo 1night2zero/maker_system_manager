@@ -62,7 +62,7 @@
           :limit="1"
           :before-upload="beforeAvatarUpload"
         >
-          <img v-if="courseInfo.cover" :src="OSS_PATH+courseInfo.cover" class="avatar">
+          <img v-if="courseInfo.cover" :src="OSS_PATH+courseInfo.cover" class="avatar" width="120px">
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
         </el-upload>
       </el-form-item>
