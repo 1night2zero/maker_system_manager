@@ -44,6 +44,20 @@ export default {
       url: `/eduservice/edu-course/publishCourse/${id}`,
       method: 'post'
     })
+  },
+  // TODO 课程列表
+  // 课程最终发布
+  getCourseList() {
+    return request({
+      url: `/eduservice/edu-course/getCourseList`,
+      method: 'get'
+    })
+  },
+  // 删除课程
+  deleteCourseById(id) {
+    return request({
+      url: `/eduservice/edu-course/removeCourse/${id}`,
+      method: 'delete'
+    })
   }
-
 }
