@@ -45,7 +45,7 @@ export default {
       method: 'post'
     })
   },
-  // TODO 课程列表
+  // TODO 课程列表分页查询
   // 课程最终发布
   getCourseList() {
     return request({

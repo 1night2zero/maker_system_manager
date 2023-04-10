@@ -29,11 +29,13 @@
             :key="video.id"
           >
             <p>{{ video.title }}
+              <!-- TODO 视频预览 -->
               <span class="acts">
                 <el-button type="text" @click="openEditVideo(video.id)">编辑</el-button>
                 <el-button type="text" @click="removeVideo(video.id)">删除</el-button>
               </span>
             </p>
+
           </li>
         </ul>
       </li>
@@ -93,17 +95,25 @@
         <el-form-item label="视频资源">
           <el-upload
             class="upload-demo"
-            action="https://jsonplaceholder.typicode.com/posts/"
-            :on-preview="handlePreview"
-            :on-remove="handleRemove"
-            :before-upload="beforeAvatarUpload"
+            :on-success="handleVodUploadSuccess"
+            :action="BASE_API+'/edu-vod/video/uploadAlyVideo'"
             :file-list="fileList"
             :limit="1"
-            :on-exceed="handleExceed"
-            :auto-upload="false"
+            :on-exceed="handleUploadExceed"
+            :before-remove="beforeRemove"
+            :on-remove="handleVodRemove"
+            multiple
           >
             <el-button size="small" type="primary">点击上传</el-button>
-            <div slot="tip" class="el-upload__tip">只能上传mp4/xxx文件，且不超过500kb</div>
+            <el-tooltip placement="right-end">
+              <div slot="content">
+                最大支持1GB，<br>
+                支持mp4、avi、wmv、rmvb、mov、mkv、<br>
+                flv、3gp、m4v、mpeg、mpg、rm、f4v、<br>
+                webm、ts格式
+              </div>
+              <i class="el-icon-question" style="margin-left: 10px;"/>
+            </el-tooltip>
           </el-upload>
         </el-form-item>
       </el-form>
@@ -124,6 +134,7 @@ export default {
   name: 'Chapter',
   data() {
     return {
+      BASE_API: process.env.VUE_APP_BASE_API,
       saveBtnDisabled: false,
       courseId: '',
       chapterVideoList: [],
@@ -134,8 +145,11 @@ export default {
       videoForm: {
         title: '',
         sort: 0,
-        isFree: 1
+        isFree: 1,
+        videoSourceId: '',
+        videoOriginalName: ''
       },
+      fileList: [],
       dialogChapterFormVisible: false, // 章节弹框
       dialogVideoFormVisible: false // 小节弹框
     }
@@ -147,7 +161,34 @@ export default {
     this.getListChapter(this.courseId)
   },
   methods: {
+    // 点击确认删除调用的方法
+    handleVodRemove() {
+      // 调用接口删除视频
+      video.deleteAliyunVideo(this.videoForm.videoSourceId).then(response => {
+        // 提示信息
+        this.$message.success('视频删除成功')
+        // 清空文件列表
+        this.fileList = []
+        // 清空视频id
+        this.videoForm.videoSourceId = ''
+        // 清空视频名称
+        this.videoForm.videoOriginalName = ''
+      })
+    },
+    // 上传视频成功调用的方法
+    handleVodUploadSuccess(response, file, fileList) {
+      // 设置视频id
+      this.videoForm.videoSourceId = response.data.videoId
+      // 设置视频名称
+      this.videoForm.videoOriginalName = file.name
+    },
 
+    handleUploadExceed() {
+      this.$message.warning('想要重新上传视频，请先删除已上传的视频')
+    },
+    beforeRemove(file, fileList) {
+      return this.$confirm(`确定移除 ${file.name}？`)
+    },
     /* 小节 */
     openVideoDialog(chapterId) {
       // 弹窗
