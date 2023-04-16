@@ -37,7 +37,8 @@
         <el-col :span="12">
           <el-form label-width="120px">
             <el-form-item label="课程封面">
-              <img :src="OSS_PATH + publishCourse.cover" alt="" style="width: 100px; height: 100px;"/>
+              <!--              <img :src="OSS_PATH + publishCourse.cover" alt="" style="width: 100px; height: 100px;"/>-->
+              <img :src=" + publishCourse.cover" alt="" style="width: 100px; height: 100px;"/>
             </el-form-item>
             <!-- 课程描述 -->
             <el-form-item label="课程描述">

@@ -199,6 +199,8 @@ export default {
       this.videoForm.title = ''
       this.videoForm.sort = 0
       this.videoForm.isFree = 1
+      // 清空文件列表
+      this.fileList = []
     },
     // 添加小节
     addVideo() {
